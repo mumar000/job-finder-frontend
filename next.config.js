@@ -4,6 +4,9 @@ const nextConfig = {
   poweredByHeader: false,
   compress: true,
 
+  // Turbopack configuration (Next.js 16+ uses Turbopack by default)
+  turbopack: {},
+
   // Image optimization
   images: {
     formats: ['image/avif', 'image/webp'],
@@ -49,22 +52,6 @@ const nextConfig = {
         ],
       },
     ]
-  },
-
-  // Webpack configuration
-  webpack: (config, { isServer }) => {
-    // Optimize bundle
-    if (!isServer) {
-      config.optimization.splitChunks.cacheGroups = {
-        ...config.optimization.splitChunks.cacheGroups,
-        commons: {
-          test: /[\\/]node_modules[\\/]/,
-          name: 'vendors',
-          chunks: 'all',
-        },
-      }
-    }
-    return config
   },
 
   // Environment variables available to the browser
