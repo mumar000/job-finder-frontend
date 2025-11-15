@@ -1,0 +1,51 @@
+{
+  "name": "job-finder-frontend",
+  "version": "1.0.0",
+  "description": "Enterprise-grade job finder frontend built with Next.js 15",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --turbopack -p 3001",
+    "build": "next build",
+    "start": "next start -p 3001",
+    "lint": "next lint",
+    "test": "vitest",
+    "test:e2e": "playwright test",
+    "analyze": "ANALYZE=true next build"
+  },
+  "keywords": [
+    "next.js",
+    "job-finder",
+    "upwork",
+    "freelance"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@hookform/resolvers": "^5.2.2",
+    "@radix-ui/react-slot": "^1.2.4",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "dompurify": "^3.3.0",
+    "framer-motion": "^12.23.24",
+    "geist": "^1.5.1",
+    "js-cookie": "^3.0.5",
+    "next": "^16.0.3",
+    "next-themes": "^0.4.6",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "react-hook-form": "^7.66.0",
+    "tailwind-merge": "^3.4.0",
+    "zod": "^4.1.12"
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.4.22",
+    "eslint": "^9.39.1",
+    "eslint-config-next": "^16.0.3",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^4.1.17"
+  },
+  "engines": {
+    "node": ">=18.17.0",
+    "npm": ">=9.0.0"
+  }
+}
