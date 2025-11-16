@@ -1,71 +1,72 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import { useJobs } from '@/hooks/use-jobs'
-import { useToast } from '@/hooks/use-toast'
-import { useDebounce } from '@/hooks/use-debounce'
-import { JobCard } from '@/components/features/job-card'
-import { JobFilters } from '@/components/features/job-filters'
-import { Pagination } from '@/components/ui/pagination'
-import { Input } from '@/components/ui/input'
-import { Button } from '@/components/ui/button'
-import { Skeleton } from '@/components/ui/skeleton'
-import { SearchIcon, FilterIcon, XIcon } from '@/components/ui/icons'
-import { jobsApi } from '@/lib/api'
-import { cn } from '@/lib/utils/cn'
+import { useState } from "react";
+import { useJobs } from "@/hooks/use-jobs";
+import { useToast } from "@/hooks/use-toast";
+import { useDebounce } from "@/hooks/use-debounce";
+import { JobCard } from "@/components/features/job-card";
+import { JobFilters } from "@/components/features/job-filters";
+import { Pagination } from "@/components/ui/pagination";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
+import { SearchIcon, FilterIcon, XIcon } from "@/components/ui/icons";
+import { jobsApi } from "@/lib/api";
+import { cn } from "@/lib/utils/cn";
 
 export default function JobsPage() {
-  const [searchQuery, setSearchQuery] = useState('')
-  const [showFilters, setShowFilters] = useState(false)
-  const [sortBy, setSortBy] = useState('match_score')
-  const { toast } = useToast()
+  const [searchQuery, setSearchQuery] = useState("");
+  const [showFilters, setShowFilters] = useState(false);
+  const [sortBy, setSortBy] = useState("match_score");
+  const { toast } = useToast();
 
-  const debouncedSearch = useDebounce(searchQuery, 500)
+  const debouncedSearch = useDebounce(searchQuery, 500);
 
-  const { jobs, loading, filters, meta, updateFilters, goToPage, refresh } = useJobs({
-    sort_by: sortBy,
-  })
+  const { jobs, loading, filters, meta, updateFilters, goToPage, refresh } =
+    useJobs({
+      sort_by: sortBy,
+    });
 
   const handleStatusChange = async (jobId, newStatus) => {
     try {
-      await jobsApi.updateJobStatus(jobId, newStatus)
+      await jobsApi.updateJobStatus(jobId, newStatus);
       toast({
-        title: 'Success',
+        title: "Success",
         description: `Job status updated to ${newStatus}`,
-        variant: 'success',
-      })
-      refresh()
+        variant: "success",
+      });
+      refresh();
     } catch (error) {
       toast({
-        title: 'Error',
-        description: error.message || 'Failed to update job status',
-        variant: 'destructive',
-      })
+        title: "Error",
+        description: error.message || "Failed to update job status",
+        variant: "destructive",
+      });
     }
-  }
+  };
 
   const handleFiltersChange = (newFilters) => {
-    updateFilters(newFilters)
-    setShowFilters(false)
-  }
+    updateFilters(newFilters);
+    setShowFilters(false);
+  };
 
   const handleClearFilters = () => {
     updateFilters({
-      status: '',
-      min_score: '',
-      max_score: '',
-      budget_type: '',
-      min_budget: '',
-      max_budget: '',
-      category: '',
-    })
-  }
+      status: "",
+      min_score: "",
+      max_score: "",
+      budget_type: "",
+      min_budget: "",
+      max_budget: "",
+      category: "",
+    });
+  };
 
   const handleSortChange = (e) => {
-    const newSort = e.target.value
-    setSortBy(newSort)
-    updateFilters({ sort_by: newSort })
-  }
+    const newSort = e.target.value;
+    setSortBy(newSort);
+    updateFilters({ sort_by: newSort });
+  };
 
   return (
     <div>
@@ -73,9 +74,7 @@ export default function JobsPage() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-3xl font-bold">Jobs</h1>
-          <p className="text-muted-foreground mt-1">
-            {meta.total} jobs found
-          </p>
+          <p className="text-muted-foreground mt-1">{meta.total} jobs found</p>
         </div>
         <Button
           variant="outline"
@@ -130,7 +129,6 @@ export default function JobsPage() {
           <div className="flex flex-col sm:flex-row gap-4 mb-6">
             {/* Search */}
             <div className="relative flex-1">
-              <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
               <Input
                 placeholder="Search jobs by title or description..."
                 value={searchQuery}
@@ -203,5 +201,5 @@ export default function JobsPage() {
         </div>
       </div>
     </div>
-  )
+  );
 }

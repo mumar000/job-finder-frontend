@@ -44,8 +44,10 @@ export function AuthProvider({ children }) {
       router.push(ROUTES.DASHBOARD)
       return { success: true }
     } catch (err) {
-      setError(err.message)
-      return { success: false, error: err.message }
+      const errorMessage = err.message || 'Login failed. Please try again.'
+      console.error('Login error:', err)
+      setError(errorMessage)
+      return { success: false, error: errorMessage }
     } finally {
       setLoading(false)
     }
@@ -60,8 +62,10 @@ export function AuthProvider({ children }) {
       router.push(ROUTES.DASHBOARD)
       return { success: true }
     } catch (err) {
-      setError(err.message)
-      return { success: false, error: err.message }
+      const errorMessage = err.message || 'Registration failed. Please try again.'
+      console.error('Registration error:', err)
+      setError(errorMessage)
+      return { success: false, error: errorMessage }
     } finally {
       setLoading(false)
     }

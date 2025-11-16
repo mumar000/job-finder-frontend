@@ -1,76 +1,90 @@
-'use client'
+"use client";
 
-import { use, useState } from 'react'
-import Link from 'next/link'
-import { useRouter } from 'next/navigation'
-import { useJobDetail } from '@/hooks/use-jobs'
-import { useToast } from '@/hooks/use-toast'
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Skeleton } from '@/components/ui/skeleton'
-import { formatMatchScore, formatBudget, formatRelativeTime, formatDate } from '@/lib/utils/formatters'
-import { JOB_STATUS, JOB_STATUS_LABELS, JOB_STATUS_COLORS, ROUTES } from '@/lib/constants'
-import { cn } from '@/lib/utils/cn'
+import { use, useState } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useJobDetail } from "@/hooks/use-jobs";
+import { useToast } from "@/hooks/use-toast";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Skeleton } from "@/components/ui/skeleton";
+import {
+  formatMatchScore,
+  formatBudget,
+  formatRelativeTime,
+  formatDate,
+} from "@/lib/utils/formatters";
+import {
+  JOB_STATUS,
+  JOB_STATUS_LABELS,
+  JOB_STATUS_COLORS,
+  ROUTES,
+} from "@/lib/constants";
+import { cn } from "@/lib/utils/cn";
 
 export default function JobDetailPage({ params }) {
-  const resolvedParams = use(params)
-  const { id } = resolvedParams
-  const router = useRouter()
-  const { toast } = useToast()
-  const { job, loading, updateJobStatus, updateJob, refresh } = useJobDetail(id)
+  const resolvedParams = use(params);
+  const { id } = resolvedParams;
+  const router = useRouter();
+  const { toast } = useToast();
+  const { job, loading, updateJobStatus, updateJob, refresh } =
+    useJobDetail(id);
 
-  const [isEditingNotes, setIsEditingNotes] = useState(false)
-  const [notes, setNotes] = useState('')
-  const [tags, setTags] = useState('')
-  const [selectedStatus, setSelectedStatus] = useState('')
+  const [isEditingNotes, setIsEditingNotes] = useState(false);
+  const [notes, setNotes] = useState("");
+  const [tags, setTags] = useState("");
+  const [selectedStatus, setSelectedStatus] = useState("");
 
   // Initialize form values when job loads
   if (job && !notes && !selectedStatus) {
-    setNotes(job.notes || '')
-    setTags(job.tags?.join(', ') || '')
-    setSelectedStatus(job.status)
+    setNotes(job.notes || "");
+    setTags(job.tags?.join(", ") || "");
+    setSelectedStatus(job.status);
   }
 
   const handleStatusChange = async (newStatus) => {
-    const result = await updateJobStatus(newStatus)
+    const result = await updateJobStatus(newStatus);
     if (result.success) {
       toast({
-        title: 'Success',
+        title: "Success",
         description: `Job status updated to ${JOB_STATUS_LABELS[newStatus]}`,
-        variant: 'success',
-      })
-      setSelectedStatus(newStatus)
+        variant: "success",
+      });
+      setSelectedStatus(newStatus);
     } else {
       toast({
-        title: 'Error',
-        description: result.error || 'Failed to update status',
-        variant: 'destructive',
-      })
+        title: "Error",
+        description: result.error || "Failed to update status",
+        variant: "destructive",
+      });
     }
-  }
+  };
 
   const handleSaveNotes = async () => {
-    const tagsArray = tags.split(',').map((t) => t.trim()).filter((t) => t)
-    const result = await updateJob({ notes, tags: tagsArray })
+    const tagsArray = tags
+      .split(",")
+      .map((t) => t.trim())
+      .filter((t) => t);
+    const result = await updateJob({ notes, tags: tagsArray });
 
     if (result.success) {
       toast({
-        title: 'Success',
-        description: 'Notes and tags saved',
-        variant: 'success',
-      })
-      setIsEditingNotes(false)
+        title: "Success",
+        description: "Notes and tags saved",
+        variant: "success",
+      });
+      setIsEditingNotes(false);
     } else {
       toast({
-        title: 'Error',
-        description: result.error || 'Failed to save',
-        variant: 'destructive',
-      })
+        title: "Error",
+        description: result.error || "Failed to save",
+        variant: "destructive",
+      });
     }
-  }
+  };
 
   if (loading) {
     return (
@@ -89,33 +103,31 @@ export default function JobDetailPage({ params }) {
           </Card>
         </div>
       </div>
-    )
+    );
   }
 
   if (!job) {
     return (
       <div className="max-w-5xl mx-auto text-center py-12">
         <h2 className="text-2xl font-bold mb-4">Job Not Found</h2>
-        <p className="text-muted-foreground mb-6">The job you're looking for doesn't exist or has been removed.</p>
+        <p className="text-muted-foreground mb-6">
+          The job you're looking for doesn't exist or has been removed.
+        </p>
         <Link href={ROUTES.JOBS}>
           <Button>Back to Jobs</Button>
         </Link>
       </div>
-    )
+    );
   }
 
-  const matchScore = formatMatchScore(job.match_score)
-  const budget = formatBudget(job)
-  const postedAt = formatRelativeTime(job.posted_at)
+  const matchScore = formatMatchScore(job.match_score);
+  const budget = formatBudget(job);
+  const postedAt = formatRelativeTime(job.posted_at);
 
   return (
     <div className="max-w-5xl mx-auto">
       {/* Back Button */}
-      <Button
-        variant="ghost"
-        onClick={() => router.back()}
-        className="mb-6"
-      >
+      <Button variant="ghost" onClick={() => router.back()} className="mb-6">
         ← Back to Jobs
       </Button>
 
@@ -139,7 +151,10 @@ export default function JobDetailPage({ params }) {
                 <div className="flex flex-col gap-2">
                   <Badge
                     variant="outline"
-                    className={cn('font-bold text-lg px-3 py-1', matchScore.color)}
+                    className={cn(
+                      "font-bold text-lg px-3 py-1",
+                      matchScore.color
+                    )}
                   >
                     {matchScore.score}%
                   </Badge>
@@ -201,9 +216,9 @@ export default function JobDetailPage({ params }) {
                       size="sm"
                       variant="outline"
                       onClick={() => {
-                        setIsEditingNotes(false)
-                        setNotes(job.notes || '')
-                        setTags(job.tags?.join(', ') || '')
+                        setIsEditingNotes(false);
+                        setNotes(job.notes || "");
+                        setTags(job.tags?.join(", ") || "");
                       }}
                     >
                       Cancel
@@ -224,7 +239,7 @@ export default function JobDetailPage({ params }) {
                   />
                 ) : (
                   <p className="text-sm text-muted-foreground mt-2">
-                    {job.notes || 'No notes added yet'}
+                    {job.notes || "No notes added yet"}
                   </p>
                 )}
               </div>
@@ -247,7 +262,9 @@ export default function JobDetailPage({ params }) {
                     ))}
                   </div>
                 ) : (
-                  <p className="text-sm text-muted-foreground mt-2">No tags added</p>
+                  <p className="text-sm text-muted-foreground mt-2">
+                    No tags added
+                  </p>
                 )}
               </div>
             </CardContent>
@@ -283,9 +300,7 @@ export default function JobDetailPage({ params }) {
                 rel="noopener noreferrer"
                 className="block"
               >
-                <Button className="w-full">
-                  View on Upwork →
-                </Button>
+                <Button className="w-full">View on Upwork →</Button>
               </a>
             </CardContent>
           </Card>
@@ -300,7 +315,9 @@ export default function JobDetailPage({ params }) {
                 {job.client_info.hire_rate !== undefined && (
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Hire Rate:</span>
-                    <span className="font-medium">{job.client_info.hire_rate}%</span>
+                    <span className="font-medium">
+                      {job.client_info.hire_rate}%
+                    </span>
                   </div>
                 )}
                 {job.client_info.total_spent !== undefined && (
@@ -314,7 +331,9 @@ export default function JobDetailPage({ params }) {
                 {job.client_info.location && (
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Location:</span>
-                    <span className="font-medium">{job.client_info.location}</span>
+                    <span className="font-medium">
+                      {job.client_info.location}
+                    </span>
                   </div>
                 )}
                 {job.client_info.payment_verified && (
@@ -328,7 +347,8 @@ export default function JobDetailPage({ params }) {
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Reviews:</span>
                     <span className="font-medium">
-                      {job.client_info.rating?.toFixed(1)} ({job.client_info.reviews_count})
+                      {job.client_info.rating?.toFixed(1)} (
+                      {job.client_info.reviews_count})
                     </span>
                   </div>
                 )}
@@ -350,7 +370,9 @@ export default function JobDetailPage({ params }) {
               )}
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Budget Type:</span>
-                <span className="font-medium capitalize">{job.budget_type}</span>
+                <span className="font-medium capitalize">
+                  {job.budget_type}
+                </span>
               </div>
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Posted:</span>
@@ -358,12 +380,14 @@ export default function JobDetailPage({ params }) {
               </div>
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Added:</span>
-                <span className="font-medium">{formatDate(job.created_at)}</span>
+                <span className="font-medium">
+                  {formatDate(job.created_at)}
+                </span>
               </div>
             </CardContent>
           </Card>
         </div>
       </div>
     </div>
-  )
+  );
 }

@@ -1,7 +1,7 @@
-'use client'
+"use client";
 
-import { useState, useEffect, useCallback } from 'react'
-import { jobsApi } from '@/lib/api'
+import { useState, useEffect, useCallback } from "react";
+import { jobsApi } from "@/lib/api";
 
 /**
  * useJobs Hook
@@ -10,71 +10,71 @@ import { jobsApi } from '@/lib/api'
  * @returns {Object} Jobs state and methods
  */
 export function useJobs(initialFilters = {}) {
-  const [jobs, setJobs] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
+  const [jobs, setJobs] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [filters, setFilters] = useState({
     page: 1,
     limit: 20,
-    sort_by: 'match_score',
-    sort_order: 'desc',
+    sort_by: "match_score",
+    sort_order: "desc",
     ...initialFilters,
-  })
+  });
   const [meta, setMeta] = useState({
     total: 0,
     page: 1,
     limit: 20,
     totalPages: 0,
-  })
+  });
 
   const fetchJobs = useCallback(async () => {
     try {
-      setLoading(true)
-      setError(null)
-      const response = await jobsApi.getJobs(filters)
-      setJobs(response.data || [])
-      setMeta(response.meta || meta)
+      setLoading(true);
+      setError(null);
+      const response = await jobsApi.getJobs(filters);
+      setJobs(response.data || []);
+      setMeta(response.meta || meta);
     } catch (err) {
-      setError(err.message)
-      console.error('Failed to fetch jobs:', err)
+      setError(err.message);
+      console.error("Failed to fetch jobs:", err);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }, [filters])
+  }, [filters]);
 
   useEffect(() => {
-    fetchJobs()
-  }, [fetchJobs])
+    fetchJobs();
+  }, [fetchJobs]);
 
   const updateFilters = (newFilters) => {
     setFilters((prev) => ({
       ...prev,
       ...newFilters,
       page: newFilters.page !== undefined ? newFilters.page : 1, // Reset to page 1 on filter change
-    }))
-  }
+    }));
+  };
 
   const nextPage = () => {
     if (filters.page < meta.totalPages) {
-      setFilters((prev) => ({ ...prev, page: prev.page + 1 }))
+      setFilters((prev) => ({ ...prev, page: prev.page + 1 }));
     }
-  }
+  };
 
   const prevPage = () => {
     if (filters.page > 1) {
-      setFilters((prev) => ({ ...prev, page: prev.page - 1 }))
+      setFilters((prev) => ({ ...prev, page: prev.page - 1 }));
     }
-  }
+  };
 
   const goToPage = (page) => {
     if (page >= 1 && page <= meta.totalPages) {
-      setFilters((prev) => ({ ...prev, page }))
+      setFilters((prev) => ({ ...prev, page }));
     }
-  }
+  };
 
   const refresh = () => {
-    fetchJobs()
-  }
+    fetchJobs();
+  };
 
   return {
     jobs,
@@ -87,7 +87,7 @@ export function useJobs(initialFilters = {}) {
     prevPage,
     goToPage,
     refresh,
-  }
+  };
 }
 
 /**
@@ -97,53 +97,53 @@ export function useJobs(initialFilters = {}) {
  * @returns {Object} Job state and methods
  */
 export function useJobDetail(jobId) {
-  const [job, setJob] = useState(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
+  const [job, setJob] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   const fetchJob = useCallback(async () => {
-    if (!jobId) return
+    if (!jobId) return;
 
     try {
-      setLoading(true)
-      setError(null)
-      const data = await jobsApi.getJob(jobId)
-      setJob(data)
+      setLoading(true);
+      setError(null);
+      const data = await jobsApi.getJob(jobId);
+      setJob(data);
     } catch (err) {
-      setError(err.message)
-      console.error('Failed to fetch job:', err)
+      setError(err.message);
+      console.error("Failed to fetch job:", err);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }, [jobId])
+  }, [jobId]);
 
   useEffect(() => {
-    fetchJob()
-  }, [fetchJob])
+    fetchJob();
+  }, [fetchJob]);
 
   const updateJobStatus = async (status) => {
     try {
-      const updatedJob = await jobsApi.updateJobStatus(jobId, status)
-      setJob(updatedJob)
-      return { success: true }
+      const updatedJob = await jobsApi.updateJobStatus(jobId, status);
+      setJob(updatedJob);
+      return { success: true };
     } catch (err) {
-      return { success: false, error: err.message }
+      return { success: false, error: err.message };
     }
-  }
+  };
 
   const updateJob = async (data) => {
     try {
-      const updatedJob = await jobsApi.updateJob(jobId, data)
-      setJob(updatedJob)
-      return { success: true }
+      const updatedJob = await jobsApi.updateJob(jobId, data);
+      setJob(updatedJob);
+      return { success: true };
     } catch (err) {
-      return { success: false, error: err.message }
+      return { success: false, error: err.message };
     }
-  }
+  };
 
   const refresh = () => {
-    fetchJob()
-  }
+    fetchJob();
+  };
 
   return {
     job,
@@ -152,5 +152,5 @@ export function useJobDetail(jobId) {
     updateJobStatus,
     updateJob,
     refresh,
-  }
+  };
 }
